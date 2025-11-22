@@ -69,4 +69,21 @@ class AddEditExpenseController extends GetxController {
       Get.back();
     }
   }
+
+  void deleteExpense() {
+    if (expenseId != null) {
+      Get.defaultDialog(
+        title: "Delete Expense",
+        middleText: "Are you sure you want to delete this expense?",
+        textConfirm: "Delete",
+        textCancel: "Cancel",
+        confirmTextColor: Colors.white,
+        onConfirm: () {
+          _expenseController.deleteExpense(expenseId!);
+          Get.back(); // Close dialog
+          Get.back(); // Close screen
+        },
+      );
+    }
+  }
 }

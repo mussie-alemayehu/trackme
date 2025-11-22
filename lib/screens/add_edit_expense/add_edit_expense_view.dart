@@ -14,6 +14,16 @@ class AddEditExpenseView extends GetView<AddEditExpenseController> {
           () =>
               Text(controller.isEditing.value ? 'Edit Expense' : 'Add Expense'),
         ),
+        actions: [
+          Obx(
+            () => controller.isEditing.value
+                ? IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: controller.deleteExpense,
+                  )
+                : const SizedBox.shrink(),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

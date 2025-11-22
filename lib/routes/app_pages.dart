@@ -11,8 +11,6 @@ import '../screens/expense_list/expense_list_binding.dart';
 import '../screens/expense_list/expense_list_view.dart';
 import '../screens/add_edit_expense/add_edit_expense_binding.dart';
 import '../screens/add_edit_expense/add_edit_expense_view.dart';
-import '../screens/category_breakdown/category_breakdown_binding.dart';
-import '../screens/category_breakdown/category_breakdown_view.dart';
 
 part 'app_routes.dart';
 
@@ -57,11 +55,6 @@ class AppPages {
       name: _Paths.EDIT_EXPENSE,
       page: () => const AddEditExpenseView(),
       binding: AddEditExpenseBinding(),
-    ),
-    GetPage(
-      name: _Paths.CATEGORY_BREAKDOWN,
-      page: () => const CategoryBreakdownView(),
-      binding: CategoryBreakdownBinding(),
     ),
   ];
 }

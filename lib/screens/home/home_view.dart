@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'home_controller.dart';
 import '../../theme/app_colors.dart';
 
@@ -10,7 +11,7 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Dashboard')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -18,12 +19,15 @@ class HomeView extends GetView<HomeController> {
             // Budget Card
             Card(
               color: AppColors.primary,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Obx(() {
                   final budget = controller.budgetRx.value.amount;
-                  // We need to listen to expenses changes too for totalSpent
-                  // Accessing controller.expensesRx triggers listener
+                  // Trigger updates when expenses change
                   controller.expensesRx.length;
 
                   final spent = controller.totalSpent;
@@ -98,34 +102,152 @@ class HomeView extends GetView<HomeController> {
                 }),
               ),
             ),
-            const SizedBox(height: 24),
-            // Navigation Buttons
-            ElevatedButton.icon(
-              onPressed: controller.goToSetBudget,
-              icon: const Icon(Icons.edit),
-              label: const Text('Set Budget'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary,
-              ),
+            const SizedBox(height: 20),
+
+            // Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: controller.goToSetBudget,
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const Text('Budget'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondary,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: controller.goToExpenses,
+                    icon: const Icon(Icons.list_alt),
+                    label: const Text('Expenses'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondary,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: controller.goToExpenses,
-              icon: const Icon(Icons.list),
-              label: const Text('View Expenses'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: controller.goToBreakdown,
-              icon: const Icon(Icons.pie_chart),
-              label: const Text('Category Breakdown'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary,
-              ),
-            ),
+
+            const SizedBox(height: 32),
+
+            // Breakdown Section
+            Obx(() {
+              if (controller.expensesRx.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 40),
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.pie_chart_outline_rounded,
+                          size: 64,
+                          color: Colors.grey.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No expenses yet',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Add an expense to see the breakdown',
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                );
+              }
+
+              final sections = controller.chartSections;
+              final legendData = controller.categoryData;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Spending Breakdown',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    height: 200,
+                    child: PieChart(
+                      PieChartData(
+                        sections: sections,
+                        centerSpaceRadius: 40,
+                        sectionsSpace: 2,
+                        borderData: FlBorderData(show: false),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // Legend List
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: legendData.length,
+                    itemBuilder: (context, index) {
+                      final data = legendData[index];
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: data.color,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        title: Text(
+                          data.name,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${data.percentage.toStringAsFixed(1)}%',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '\$${data.amount.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            }),
           ],
         ),
       ),

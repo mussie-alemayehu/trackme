@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import 'home_controller.dart';
 import '../../theme/app_colors.dart';
 
@@ -185,15 +186,87 @@ class HomeView extends GetView<HomeController> {
 
               final sections = controller.chartSections;
               final legendData = controller.categoryData;
+              final recentExpenses = controller.recentExpenses;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Recent Expenses Section
+                  if (recentExpenses.isNotEmpty) ...[
+                    Text(
+                      'Recent Expenses',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ListView.separated(
+                      padding: const EdgeInsets.all(0),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: recentExpenses.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      itemBuilder: (context, index) {
+                        final expense = recentExpenses[index];
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            backgroundColor: AppColors.primary.withValues(
+                              alpha: 0.1,
+                            ),
+                            radius: 20,
+                            child: const Icon(
+                              Icons.receipt_long,
+                              size: 20,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          title: Text(
+                            expense.title,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          subtitle: Text(
+                            DateFormat.MMMd().format(expense.date),
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                            ),
+                          ),
+                          trailing: Text(
+                            '\$${expense.amount.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton.icon(
+                          onPressed: controller.goToAddExpense,
+                          icon: const Icon(Icons.add),
+                          label: const Text('Add Expense'),
+                        ),
+                        const SizedBox(width: 16),
+                        TextButton.icon(
+                          onPressed: controller.goToExpenses,
+                          icon: const Icon(Icons.list),
+                          label: const Text('View All'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+
                   Text(
                     'Spending Breakdown',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 24),

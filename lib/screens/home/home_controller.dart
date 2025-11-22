@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:trackme/models/expense.dart';
 
 import '../../controllers/budget_controller.dart';
 import '../../controllers/expense_controller.dart';
@@ -37,6 +38,7 @@ class HomeController extends GetxController {
 
   void goToSetBudget() => Get.toNamed(Routes.SET_BUDGET);
   void goToExpenses() => Get.toNamed(Routes.EXPENSE_LIST);
+  void goToAddExpense() => Get.toNamed(Routes.ADD_EXPENSE);
 
   // Chart & Legend Logic
   final List<Color> _colors = [
@@ -78,6 +80,13 @@ class HomeController extends GetxController {
         percentage: percentage,
       );
     }).toList();
+  }
+
+  // Recent Expenses Logic
+  List<Expense> get recentExpenses {
+    final allExpenses = List.of(_expenseController.expenses);
+    allExpenses.sort((a, b) => b.date.compareTo(a.date));
+    return allExpenses.take(3).toList();
   }
 
   List<PieChartSectionData> get chartSections {

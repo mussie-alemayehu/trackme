@@ -1,4 +1,4 @@
-package com.example.trackme
+package com.mussie.trackme
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -14,10 +14,19 @@ class SplashView extends GetView<SplashController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.account_balance_wallet,
-              size: 80,
-              color: Colors.white,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SizedBox.square(
+                dimension: 120,
+                child: Image.asset(
+                  'assets/app-icon.png',
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.account_balance_wallet,
+                    size: 80,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 20),
             Text(

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
+
 import '../../controllers/budget_controller.dart';
 import '../../controllers/expense_controller.dart';
 import '../../routes/app_pages.dart';
 import '../../models/budget.dart';
+import '../../services/theme_service.dart';
+import '../../theme/app_colors.dart';
 
 class CategoryData {
   final String name;
@@ -34,7 +37,6 @@ class HomeController extends GetxController {
 
   void goToSetBudget() => Get.toNamed(Routes.SET_BUDGET);
   void goToExpenses() => Get.toNamed(Routes.EXPENSE_LIST);
-  // Removed goToBreakdown as it is now part of home
 
   // Chart & Legend Logic
   final List<Color> _colors = [
@@ -92,5 +94,64 @@ class HomeController extends GetxController {
         ),
       );
     }).toList();
+  }
+
+  void showThemeSettings() {
+    final themeService = ThemeService();
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(
+          16,
+        ).copyWith(bottom: Get.mediaQuery.viewPadding.bottom + 8),
+        decoration: BoxDecoration(
+          color: Get.theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Select Theme',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.brightness_auto),
+              title: const Text('System Default'),
+              onTap: () {
+                themeService.changeThemeMode(ThemeMode.system);
+                Get.back();
+              },
+              trailing: themeService.themeMode == ThemeMode.system
+                  ? const Icon(Icons.check, color: AppColors.primary)
+                  : null,
+            ),
+            ListTile(
+              leading: const Icon(Icons.wb_sunny),
+              title: const Text('Light Mode'),
+              onTap: () {
+                themeService.changeThemeMode(ThemeMode.light);
+                Get.back();
+              },
+              trailing: themeService.themeMode == ThemeMode.light
+                  ? const Icon(Icons.check, color: AppColors.primary)
+                  : null,
+            ),
+            ListTile(
+              leading: const Icon(Icons.nightlight_round),
+              title: const Text('Dark Mode'),
+              onTap: () {
+                themeService.changeThemeMode(ThemeMode.dark);
+                Get.back();
+              },
+              trailing: themeService.themeMode == ThemeMode.dark
+                  ? const Icon(Icons.check, color: AppColors.primary)
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

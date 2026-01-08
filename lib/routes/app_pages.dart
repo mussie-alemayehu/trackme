@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:get/get.dart';
 import '../screens/splash/splash_binding.dart';
 import '../screens/splash/splash_view.dart';
@@ -12,47 +14,56 @@ import '../screens/expense_list/expense_list_view.dart';
 import '../screens/add_edit_expense/add_edit_expense_binding.dart';
 import '../screens/add_edit_expense/add_edit_expense_view.dart';
 
-part 'app_routes.dart';
+abstract class Routes {
+  Routes._();
+  static const SPLASH = '/splash';
+  static const ONBOARDING = '/onboarding';
+  static const HOME = '/home';
+  static const SET_BUDGET = '/set-budget';
+  static const EXPENSE_LIST = '/expense-list';
+  static const ADD_EXPENSE = '/add-expense';
+  static const EDIT_EXPENSE = '/edit-expense';
+  static const CATEGORY_BREAKDOWN = '/category-breakdown';
+}
 
 class AppPages {
   AppPages._();
 
-  // ignore: constant_identifier_names
   static const INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(
-      name: _Paths.SPLASH,
+      name: Routes.SPLASH,
       page: () => const SplashView(),
       binding: SplashBinding(),
     ),
     GetPage(
-      name: _Paths.ONBOARDING,
+      name: Routes.ONBOARDING,
       page: () => const OnboardingView(),
       binding: OnboardingBinding(),
     ),
     GetPage(
-      name: _Paths.HOME,
+      name: Routes.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
     ),
     GetPage(
-      name: _Paths.SET_BUDGET,
+      name: Routes.SET_BUDGET,
       page: () => const SetBudgetView(),
       binding: SetBudgetBinding(),
     ),
     GetPage(
-      name: _Paths.EXPENSE_LIST,
+      name: Routes.EXPENSE_LIST,
       page: () => const ExpenseListView(),
       binding: ExpenseListBinding(),
     ),
     GetPage(
-      name: _Paths.ADD_EXPENSE,
+      name: Routes.ADD_EXPENSE,
       page: () => const AddEditExpenseView(),
       binding: AddEditExpenseBinding(),
     ),
     GetPage(
-      name: _Paths.EDIT_EXPENSE,
+      name: Routes.EDIT_EXPENSE,
       page: () => const AddEditExpenseView(),
       binding: AddEditExpenseBinding(),
     ),
